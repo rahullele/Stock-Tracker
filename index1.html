@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stocsk Market Search</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="content-type" content="type =text/html ;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width , initial-scale =1"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"
+            type="text/javascript"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" rel="stylesheet"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="style.css" rel="stylesheet"/>
+
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"
+            type="text/javascript"></script>
+    <script src='http://connect.facebook.net/en_US/all.js'></script>
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="http://code.highcharts.com/stock/highcharts-more.js"></script>
+
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src='http://connect.facebook.net/en_US/all.js'></script>
+
+
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.min.js"></script>
+
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+ 
+<!-- Angular Material Library -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.4/angular-material.min.js"></script>
+
+
+    <script src="script16.js" type="text/javascript"></script>
+</head>
+<body style="background-image: url(http://cs-server.usc.edu:45678/hw/hw8/images/background.png);width:100%;height:175%;">
+
+<div data-role="page" style="position:absolute;top:20px;left:50px;" align="center">
+        <div class=" container well searchForm" id="stockForm">
+            <h4 class="stockHeader">Stock Market Search</h4>
+            <form>
+                <div class="row">
+                    <div class="col-md-3 ">
+                        <b>Enter the stasdsock name or symbol<b><span class="symbolLabel"> *</span>
+                    </div>
+                        <!--
+                        <input type="text" id="autoComplete" class="form-control input-sm "
+                               placeholder="Apple Inc or AAPL" required/>
+                        <div id="results"></div>
+                    -->
+
+                    <div ng-app="myApp" ng-controller="myCtrl" class="ng-cloak"> 
+                            <div class="col-md-6">
+
+                                 <form name="searchForm" 
+                                ng-submit="submit()" >
+                                <md-content >
+                                <md-autocomplete id="auto"
+                                        md-input-name="auto"
+                                        md-selected-item="selectedItem"
+                                        md-selected-item-change="selectedItemChange(item.Symbol)"
+                                        md-search-text="searchText"
+                                        md-items="item in searchTextChange(searchText)"
+                                        md-item-text="item.Symbol"
+                                        class="spl"       
+                                        placeholder="Enter Stock Symbol">
+                                        
+                                    <md-item-template>
+                                      <span>
+                                    {{item.Symbol}}-{{item.Name}}-{{item.Exchange}}
+                                      </span>
+                                    </md-item-template>
+                                    
+                                </md-autocomplete>
+                                 <p>{{message}}</p>
+                                 <span id="error1"></span>
+                                    </div>
+                                    <div class="col-md-3">
+                                    <button type="submit" name="some" class="btn btn-primary" id="getQuote" ng-disabled="disabled" /><i class="fa fa-search-minus"> Get Quote</i></button>
+                                    
+                     <!--           <button type="submit"  id="getQuote"
+                        ><i class="fa fa-search-minus">Get
+                            Quote</i></button>
+                        -->
+                                    <button type="button" class="btn btn-default " id="clearButton" ng-click="clr()" ><i
+                                class="fa fa-refresh"> Clear</i></button>
+                                      <br/>
+
+
+                                    </div>
+                                
+                                </md-content>
+                                   </form>
+ 
+
+                    
+                                </div>
+                  
+                <div class="row">
+                    <div class="col-md-offset-6 col-md-3">
+                        <span id="errorAlert" style="color: red"></span>
+                    </div>
+                </div>
+            </form>
+
+        <div class="container">
+            <hr>
+        </div>
+    </div>
+</div> <!-- Container well search form closes here -->
+
+     <div class=" well container">
+
+        <div class="well" style="padding: 0">
+
+            <div id="myCarousel" class="carousel slide" data-interval="false">
+
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                    <div class="item active">
+
+                <div class="navbar navbar-default">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class=" col-md-3 col-sm-4 col-xs-5 "
+                                    ><b id ="favouriteText" class="smallFont">Favourite List</b>
+                                    </div>
+                                    <div  align="right" class="col-md-4 col-md-offset-5 col-sm-offset-3 col-sm-6   col-xs-7" id="menuBar-2" style="padding-right: 5px;">
+
+
+                                        <label class="hidden-xs" id="labelReferesh" for="refershButton">
+                                            Automatic Refersh:</label>
+                                        <input type="checkbox" data-toggle="toggle" data-size="normal"
+                                               id="refershButton" class="refershCheckbox"/>
+                                        <button id ="refButtonWrapper"> <i class="glyphicon glyphicon-refresh btn btn-md btn-default " id="refereshNowButton"></i></button>
+
+                                        <button id ="nextButtton"><i href="#myCarousel" data-slide="next"
+                                                                     class="glyphicon glyphicon-chevron-right btn btn-default btn-md "
+                                                                     id="rightPanel-navigation"></i></button>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div  id ="table-wrapper" class="container">
+                            
+                                <div id ="table-scroll" class="container" >
+                                    
+                                    
+                                        <div class="col-md-1" style="margin-top:8px;">
+                                            <b>Sort by </b>
+                                        </div>
+                                        <div class="col-md-2">
+
+                                    <select class="form-control">
+                                        <option value="-">Default</option>
+                                        <option value="0">Symbol</option>
+                                        <option value="1">Stock Price</option>
+                                        <option value="2">Change(Change Percent)</option>
+                                        <option value="3">Market Cap</option>
+                                    </select>
+                                </div>
+                                        <div class="col-md-1" style="margin-top:8px;">
+                                            <b>Ordersdsd</b>
+                                        </div>
+                                        <div class="col-md-2">                                  
+                                          <select class="form-control" id="sort" disabled="true">
+                                        <option value="0" selected="selected">Ascending</option>
+                                        <option value="1">Descending</option>
+                                    </select>
+                                    </div>
+
+                                    <table class="table table-striped " id="favouriteTable" style="margin-top:50px;">
+
+                                        <tr>
+                                            <th><span >Symbol</span></th>
+                                            <th><span>Stock Price</span></th>
+                                            <th>Change(Change Percent)</th>
+                                            <th >Market Cap</th>
+                                            <th id="deleteTh"></th>
+                                        </tr>
+
+
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+<div class="item">
+        <div class="navbar">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-xs-3 col-md-3 ">
+                                        <button href="#myCarousel" data-slide="prev" style="margin: 0% "
+                                                class="btn-responsive"><i
+                                                class=" glyphicon glyphicon-chevron-left btn "></i></button>
+
+                                    </div>
+                                    <div class="col-xs-7 col-md-6 col-md-offset-right-3 text-center">
+                                        <b style="margin-left: 2%">Stock Details</b>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div id="fb-root"></div>
+
+                            <!-------->
+                            <div id="content">
+                                <ul id="tabs" class="nav nav-pills" data-tabs="tabs">
+                                    <li class="active stockClass"><a href="#stockDetails" data-toggle="tab"><i
+                                            class="glyphicon glyphicon-dashboard"> </i> <span
+                                            class="ScreenHide">Current</span> Stock</a></li>
+                                    <li class="chartClass"><a href="#interactiveChart" data-toggle="tab"><i
+                                            class="glyphicon glyphicon-stats" id="highStocks"> </i> <span
+                                            class="ScreenHide">Historical</span>
+                                        Charts</a></a></li>
+                                    <li id="feedTab" class="feedClass"><a href="#newsFeeds" data-toggle="tab"><i
+                                            class="glyphicon glyphicon-link"> </i> <span class="ScreenHide">News</span>
+                                        Feeds</a></li>
+
+                                </ul>
+                                <hr>
+                                <div id="my-tab-content" class="tab-content">
+                                    <div class="tab-pane active" id="stockDetails">
+                                            
+                                             <div class="col-md-6 col-xs-14">
+                                                <div class="row">
+                                                    <div class="col-md-3 col-xs-14">
+                                                <b>Stock Details</b>
+                                                    </div>
+                                            
+                                            <div align="right" class="col-md-4  col-md-offset-5   col-xs-4 col-sm-2 col-sm-offset-2">
+                                                <!-- <button style="height: 30px" id="starBat" onClick="star()" disabled="true">
+                                                    <span class="glyphicon glyphicon-star" ></span>
+                                                <!-- <i id="starElement">&#9734;</i> 
+                                                </button> -->
+
+                                                <button type="button" class="btn btn-default btn-lg" id="starBat" onClick="star()" disabled="true">
+                                                    <i class="icon-star-empty icon-large icon-a "
+                                                        id="starElement"></i> </button>
+
+                                                <button id="fbData" type="button" class="btn btn-default btn-sm" disabled="true">
+                                                    <img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png  "
+                                                        style="width:35px;height:35px;" id="fbimage" /></button>
+
+                                                
+                                            </div>
+
+                                                 </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-14">
+                                                <div class="container">
+                                                    <table classs="table table-striped " id="resultTable" width="45%" height="50%" cellpadding="50">
+                                                        
+
+
+                                                    </table>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-2">
+                                        
+                                        <div class="container-fluid">
+                                        <div class="row">
+                                        <ul class="nav nav-tabs">
+                                        <li class="active"><a data-toggle="tab" href="#home">Price</a></li>
+                                        <li><a data-toggle="tab" href="#menu1">SMA</a></li>
+                                        <li><a data-toggle="tab" href="#menu2">EMA</a></li>
+                                        <li><a data-toggle="tab" href="#menu3">STOCH</a></li>
+                                        <li><a data-toggle="tab" href="#menu4">RSI</a></li>
+                                        <li><a data-toggle="tab" href="#menu5">ADX</a></li>
+                                        <li><a data-toggle="tab" href="#menu6">CCI</a></li>
+                                        <li><a data-toggle="tab" href="#menu7">BBANDS</a></li>
+                                        <li><a data-toggle="tab" href="#menu8">MACD</a></li>
+
+                                      </ul>
+
+                                      <div class=" col-md-5 col-sm-2 tab-content">
+                                        <div id="home" class="tab-pane fade in active">
+                                          <div id="Pricedata">
+                                            
+                                          </div>
+                                        </div>
+                                        <div id="menu1" class="tab-pane fade">
+                                          <div id="SMAdata">
+                                           
+                                          </div>
+                                        </div>
+                                        <div id="menu2" class="tab-pane fade">
+                                          <div id="EMAdata">
+                                            
+                                            </div>
+                                          </div>
+                                        <div id="menu3" class="tab-pane fade">
+                                          <div id="STOCHdata">
+                                            
+                                          </div>
+                                        </div>
+                                        <div id="menu4" class="tab-pane fade">
+                                          <div id="RSIdata">
+                                            
+                                          </div>
+                                        </div>
+                                        <div id="menu5" class="tab-pane fade">
+                                          <div id="ADXdata">
+                                           
+                                          </div>
+                                        </div>
+                                        <div id="menu6" class="tab-pane fade">
+                                          <div id="CCIdata">
+                                            
+                                          </div>
+                                        </div>
+                                        <div id="menu7" class="tab-pane fade">
+                                          <div id="BBANDSdata">
+                                            
+                                          </div>
+                                        </div>
+                                        <div id="menu8" class="tab-pane fade">
+                                          <div id="MACDdata">
+                                            
+                                          </div>
+                                        </div>
+                                      
+
+                                      </div>
+
+
+                                  </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                <div class="tab-pane " id="interactiveChart">
+
+                                        <div id="chartData"></div>
+
+
+                                    </div>
+                                    <div class="tab-pane" id="newsFeeds">
+                                        <!--<div id="feedData">
+                                        <!--<div id="feedData">
+                                         </div>-->
+                                    </div>
+</div>
+                                </div>
+                            </div>
+</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+</div> <!-- Page role ends here -->
+
+
+</body>
+</html>
